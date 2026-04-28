@@ -1,3 +1,14 @@
+---
+title: Scrutiny
+emoji: 🌖
+colorFrom: purple
+colorTo: red
+sdk: docker
+pinned: false
+license: apache-2.0
+short_description: Get FDCPA violations flagged with statutory citations
+---
+
 # Scrutiny
 
 > What your QA misses in 60 minutes, Scrutiny finds in 60 seconds.
