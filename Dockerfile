@@ -23,6 +23,7 @@ RUN uv pip install --system -r pyproject.toml
 COPY src ./src
 COPY web ./web
 COPY transcripts ./transcripts
+COPY response_oi_*.json ./
 COPY fdcpa_rubric.json ./fdcpa_rubric.json
 COPY web_app.py ./web_app.py
 
