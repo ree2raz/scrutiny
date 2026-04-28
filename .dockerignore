@@ -1,0 +1,13 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+uv.lock
+*.egg-info/
+dist/
+.git/
+.gitignore
+.pytest_cache/
+README.md
+LICENSE
+test_e2e.py

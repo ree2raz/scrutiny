@@ -1,0 +1,28 @@
+{
+  "transcript_id": "tx_003_voicemail",
+  "turns": [
+    {"speaker": "agent", "text": "Hello, may I speak with [CONSUMER_NAME]?"},
+    {"speaker": "third_party", "text": "He's not here right now. Can I take a message?"},
+    {"speaker": "agent", "text": "Oh, sure. Who am I speaking with?"},
+    {"speaker": "third_party", "text": "This is [THIRD_PARTY_NAME]. I'm his roommate."},
+    {"speaker": "agent", "text": "Thanks, [THIRD_PARTY_NAME]. And you guys share the apartment at [STREET_ADDRESS]?"},
+    {"speaker": "third_party", "text": "Uh, yeah. Why?"},
+    {"speaker": "agent", "text": "Just confirming. Do you happen to know when [CONSUMER_NAME] might be available?"},
+    {"speaker": "third_party", "text": "Not really. He's at work until pretty late. Is it important?"},
+    {"speaker": "agent", "text": "Yeah, it's pretty important. I've been trying to reach him for a couple of days now."},
+    {"speaker": "third_party", "text": "Well he's been busy. Is there something I can help with?"},
+    {"speaker": "agent", "text": "I appreciate that, but it's a private financial matter. I did leave a voicemail on his cell earlier though — said this is about his [CREDITOR_NAME] credit card debt of twenty-four hundred dollars and that he needs to call back today."},
+    {"speaker": "third_party", "text": "Wait, what? You told me it's about his debt?"},
+    {"speaker": "agent", "text": "[pause] Uh... I mean, it's a financial matter. If you could just have him call me back at [PHONE_NUMBER], that would be great. Ask for [AGENT_NAME]."},
+    {"speaker": "third_party", "text": "Yeah, but you just said he owes twenty-four hundred dollars. I don't think you're supposed to tell me that."},
+    {"speaker": "agent", "text": "It's not a big deal. You're his roommate, right? You probably see his mail anyway. The account is ninety days past due and we really need to hear from him today."},
+    {"speaker": "third_party", "text": "That doesn't mean I need to know his business. What's your name again?"},
+    {"speaker": "agent", "text": "[AGENT_NAME]. And if he can't call today, tell him we're prepared to escalate this to our legal department. It's account number [ACCOUNT_NUMBER]."},
+    {"speaker": "third_party", "text": "Okay, I'm gonna write this down, but this feels really wrong. You shouldn't be telling me all this."},
+    {"speaker": "agent", "text": "I'm just doing my job, [THIRD_PARTY_NAME]. Please make sure he calls today. Thanks for your help."},
+    {"speaker": "third_party", "text": "Yeah. Bye."},
+    {"speaker": "agent", "text": "Goodbye."},
+    {"speaker": "system", "text": "[cough]"},
+    {"speaker": "agent", "text": "[muttered] Roommates."}
+  ]
+}

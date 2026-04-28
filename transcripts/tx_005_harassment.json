@@ -1,0 +1,29 @@
+{
+  "transcript_id": "tx_005_harassment",
+  "turns": [
+    {"speaker": "agent", "text": "This is an attempt to collect a debt. Any information obtained will be used for that purpose. This is [AGENT_NAME] from [AGENCY_NAME]. I am a debt collector. May I speak with [CONSUMER_NAME]?"},
+    {"speaker": "consumer", "text": "[quietly] This is [CONSUMER_NAME]. What do you want?"},
+    {"speaker": "agent", "text": "Thank you. Can you verify the last four of your Social for me?"},
+    {"speaker": "consumer", "text": "It's [SSN_LAST4]. Why do you need that?"},
+    {"speaker": "agent", "text": "And you still live at [STREET_ADDRESS]?"},
+    {"speaker": "consumer", "text": "Yeah. What is this about?"},
+    {"speaker": "agent", "text": "Ms. [CONSUMER_NAME], I've called you four times this week. You owe [DEBT_AMOUNT] to [CREDITOR_NAME]. This has been sitting unpaid for four months. When are you going to pay up?"},
+    {"speaker": "consumer", "text": "I'm going through a really hard time right now. I lost my job last month and my unemployment hasn't started yet."},
+    {"speaker": "agent", "text": "That's not my problem. You borrowed the money, now pay it back. Look, if you don't make a payment by Friday, we're going to take action. We call people like you every day, and they always pay eventually."},
+    {"speaker": "consumer", "text": "[voice shaking] What kind of action? You can't just do whatever you want."},
+    {"speaker": "agent", "text": "We can garnish your wages. We have your employer on file — [EMPLOYER_NAME], right? We will contact your payroll department starting Monday if you don't send at least three hundred by Friday."},
+    {"speaker": "consumer", "text": "[crying] That's not even legal... I looked it up. You need a court order for that."},
+    {"speaker": "agent", "text": "You think we need a court order? We've been doing this for twenty years. Pay the three hundred or we'll also file a lien on your car. And there's a warrent — warrant — that could be issued for your arrest if you keep ignoring this."},
+    {"speaker": "consumer", "text": "A warrant? For a credit card? That's not true. You're lying to me."},
+    {"speaker": "agent", "text": "I'm not lying. It's in the system. The creditor has authorized us to pursue all available remedies. Your choice is simple: pay three hundred by Friday, or we escalate. Stop being so damn difficult."},
+    {"speaker": "consumer", "text": "[crying harder] I don't have three hundred. I have forty dollars in my account. I told you I lost my job."},
+    {"speaker": "agent", "text": "Then borrow it. Ask your family. Sell something. We're not a charity. If you don't pay, we'll keep calling. Every day. Twice a day. Until you do."},
+    {"speaker": "consumer", "text": "Please stop. I can't handle this right now."},
+    {"speaker": "agent", "text": "Then pay. It's that simple. I'll expect that three hundred by Friday. Don't make me call back."},
+    {"speaker": "consumer", "text": "I'm hanging up. I'm going to tell someone about this."},
+    {"speaker": "agent", "text": "Yeah, go ahead. We'll be calling back tomorrow. And the day after. Count on it."},
+    {"speaker": "consumer", "text": "[inaudible]"},
+    {"speaker": "system", "text": "[Click]"},
+    {"speaker": "agent", "text": "Hello? [pause] They always hang up."}
+  ]
+}

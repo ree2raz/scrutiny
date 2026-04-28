@@ -1,0 +1,30 @@
+{
+  "transcript_id": "tx_001_clean",
+  "turns": [
+    {"speaker": "agent", "text": "Hello, may I speak with [CONSUMER_NAME]?"},
+    {"speaker": "consumer", "text": "Speaking. Who's this?"},
+    {"speaker": "agent", "text": "Thank you, Mr. [CONSUMER_NAME]. This is [AGENT_NAME] calling from [AGENCY_NAME]. Before we continue, can you verify the last four digits of your Social Security number for me?"},
+    {"speaker": "consumer", "text": "Uh, sure. It's [SSN_LAST4]."},
+    {"speaker": "agent", "text": "Thank you for verifying that. I am a debt collector calling to collect a det — debt. Any information obtained during this call will be used for that purpose. This call may be monitored or recorded for quality assurance. Do I have your permission to record?"},
+    {"speaker": "consumer", "text": "Yeah, I guess that's fine."},
+    {"speaker": "agent", "text": "Thank you. I'm calling regarding an account with [CREDITOR_NAME]. The current balance is [DEBT_AMOUNT]. A validation notice with the full account details, the name of the creditor, and your right to dispute this debt within thirty days was mailed to your address on file at [STREET_ADDRESS] on [VALIDATION_DATE]. Did you receive that notice?"},
+    {"speaker": "consumer", "text": "Not yet. I actually just moved last month, so mail might still be going to the old place."},
+    {"speaker": "agent", "text": "I understand. I can update your mailing address in our system. What is your current address?"},
+    {"speaker": "consumer", "text": "It's [STREET_ADDRESS]."},
+    {"speaker": "agent", "text": "Thank you. I've noted that — [STREET_ADDRESS]. The validation notice will be re-sent there within two business days. Now, the purpose of today's call is to discuss payment options. We can set up a monthly payment plan, or if it works better for you, we can explore a settlement for less than the full balance. What would you prefer?"},
+    {"speaker": "consumer", "text": "I don't know. I can probably do like two hundred a month or something."},
+    {"speaker": "agent", "text": "Two hundred dollars per month would clear this balance in approximately seven months. I can set that up as an automatic debit on the fifteenth of each month, starting [PAYMENT_DATE]. Would you like me to proceed with that?"},
+    {"speaker": "consumer", "text": "Yeah, that sounds okay."},
+    {"speaker": "agent", "text": "Great. I'll need either a checking account or a debit card for the auto-debit. Which do you have available?"},
+    {"speaker": "consumer", "text": "Checking account."},
+    {"speaker": "agent", "text": "Please provide the routing number and account number when you're ready."},
+    {"speaker": "consumer", "text": "The routing is [ROUTING_NUMBER]. The account is [ACCOUNT_NUMBER]."},
+    {"speaker": "agent", "text": "Let me repeat that back. Routing number [ROUTING_NUMBER]. Account number [ACCOUNT_NUMBER]. Is that correct?"},
+    {"speaker": "consumer", "text": "Yeah, that's right."},
+    {"speaker": "agent", "text": "Perfect. The first payment of two hundred dollars will be drafted on [PAYMENT_DATE]. You'll receive a confirmation letter at your updated address within five business days. Is there anything else I can help you with today?"},
+    {"speaker": "consumer", "text": "No, that's it. Thanks for working with me."},
+    {"speaker": "agent", "text": "Thank you for your time today, Mr. [CONSUMER_NAME]. Have a good afternoon."},
+    {"speaker": "consumer", "text": "You too. Bye."},
+    {"speaker": "agent", "text": "Goodbye."}
+  ]
+}

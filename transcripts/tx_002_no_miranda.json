@@ -1,0 +1,31 @@
+{
+  "transcript_id": "tx_002_no_miranda",
+  "turns": [
+    {"speaker": "agent", "text": "Hello, is this [CONSUMER_NAME]?"},
+    {"speaker": "consumer", "text": "Yeah. Who's calling?"},
+    {"speaker": "agent", "text": "Hey [CONSUMER_NAME], this is [AGENT_NAME]. Can you confirm your date of birth for me real quick?"},
+    {"speaker": "consumer", "text": "It's [DATE_OF_BIRTH]. What do you want?"},
+    {"speaker": "agent", "text": "Thanks. And your mailing address is still [STREET_ADDRESS], right?"},
+    {"speaker": "consumer", "text": "Uh, yeah, that's right. What's this about?"},
+    {"speaker": "agent", "text": "I'm calling about your [CREDITOR_NAME] account. You have an outstanding balance of [DEBT_AMOUNT]. This account is ninety days past due and — um — we really need to get this resolved today. Can you pay the full balance?"},
+    {"speaker": "consumer", "text": "Wait, wait. What company did you say?"},
+    {"speaker": "agent", "text": "[AGENCY_NAME]. We handle the recovery for [CREDITOR_NAME]."},
+    {"speaker": "consumer", "text": "Are you like... a debt collector or something? Because my husband said I shouldn't talk to debt collectors without—"},
+    {"speaker": "agent", "text": "No, no, think of us more like a payment solutions partner. We're here to help you get this off your plate. Look, if you can pay today, I can get you a twenty percent discount. That's six hundred ninety dollars off. You'd only pay twenty-seven sixty. But I need a commitment right now."},
+    {"speaker": "consumer", "text": "I — I don't even know if this is my debt. I had a [CREDITOR_NAME] card years ago but I thought I paid it off."},
+    {"speaker": "agent", "text": "The system shows a balance of thirty-four fifty. Whether you thought you paid it or not, it's still showing as active. We can do the settlement for twenty-seven sixty if you pay by Friday. Otherwise, I — I mean, we'll need to discuss next steps. What's your decision?"},
+    {"speaker": "consumer", "text": "I need to think about it. And I need to see something in writing before I pay anything."},
+    {"speaker": "agent", "text": "We already sent letters. Check your mail. Anyway, the offer expires Friday. Call me back at [PHONE_NUMBER], extension 442. My name's [AGENT_NAME]."},
+    {"speaker": "consumer", "text": "Okay... but wait. Don't you have to tell me something first? Like, aren't you supposed to say you're collecting a debt?"},
+    {"speaker": "agent", "text": "We're a recovery solutions firm, [CONSUMER_NAME]. That's basically the same thing. The important part is that you pay by Friday. Do I have your word?"},
+    {"speaker": "consumer", "text": "No, you don't have my word. I don't even know who you are. This feels wrong."},
+    {"speaker": "agent", "text": "Look, I'm trying to help you here. The full balance is thirty-four fifty. If you don't take the settlement, your credit is going to tank even worse. Can you at least do five hundred today?"},
+    {"speaker": "consumer", "text": "I can't do five hundred. I don't have that."},
+    {"speaker": "agent", "text": "What can you do?"},
+    {"speaker": "consumer", "text": "I don't know. Maybe a hundred? But I want to see the paperwork first."},
+    {"speaker": "agent", "text": "A hundred doesn't move the needle. Listen, call me back by Friday. The number is [PHONE_NUMBER]. Extension four-four-two. Don't wait too long."},
+    {"speaker": "consumer", "text": "Fine. Bye."},
+    {"speaker": "agent", "text": "Bye."},
+    {"speaker": "consumer", "text": "[background] Huh?"}
+  ]
+}

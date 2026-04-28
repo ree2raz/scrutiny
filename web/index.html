@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrutiny — FDCPA Call Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e0c;
+    --bg-raised: #1a1815;
+    --bg-warm: #181410;
+    --surface: #24201c;
+    --surface-hover: #2e2924;
+    --border: #3d3530;
+    --border-subtle: #2a2520;
+    --text: #e8e2da;
+    --text-muted: #9e958a;
+    --text-dim: #6b6259;
+    --accent: #c4763a;
+    --accent-light: #e0945a;
+    --accent-glow: rgba(196,118,58,0.15);
+    --pass: #6b9e6b;
+    --fail: #c45a4a;
+    --fail-glow: rgba(196,90,74,0.15);
+    --warning: #c4a43a;
+    --font-sans: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --radius: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 17px; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(196,118,58,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 90%, rgba(196,118,58,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 2rem 0 2.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 2rem;
+  }
+
+  .hero h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 0.6rem;
+  }
+
+  .hero h1 .accent { color: var(--accent); }
+
+  .hero p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  .hero .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    background: var(--bg-raised);
+    border: 1px solid var(--border-subtle);
+    padding: 0.35rem 0.75rem;
+    border-radius: 99px;
+    margin-top: 1.2rem;
+  }
+
+  .hero .badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  section { margin-bottom: 2.2rem; }
+
+  section h2 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 0.9rem;
+  }
+
+  textarea, .file-label {
+    width: 100%;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  textarea {
+    padding: 0.9rem 1rem;
+    min-height: 220px;
+    resize: vertical;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  textarea::placeholder { color: var(--text-dim); }
+
+  .file-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+  }
+
+  .file-label:hover {
+    border-color: var(--border);
+    background: var(--bg-warm);
+  }
+
+  .file-label svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--text-dim);
+  }
+
+  input[type="file"] { display: none; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.92rem;
+    font-weight: 600;
+    padding: 0.75rem 1.6rem;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+  }
+
+  .btn:active { transform: translateY(1px); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0f0e0c;
+  }
+
+  .btn-primary:hover { background: var(--accent-light); }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .btn-ghost:hover {
+    color: var(--text);
+    border-color: var(--border);
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .results { display: none; }
+  .results.active { display: block; }
+
+  .scoreboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .scoreboard { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .score-card {
+    background: var(--bg-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.2rem;
+    text-align: center;
+  }
+
+  .score-card .label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    margin-bottom: 0.4rem;
+  }
+
+  .score-card .value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .score-card .value.pass { color: var(--pass); }
+  .score-card .value.fail { color: var(--fail); }
+  .score-card .value.neutral { color: var(--text); }
+  .score-card .value.warning { color: var(--warning); }
+
+  .summary-box {
+    background: var(--bg-raised);
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.2rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  .summary-box strong { color: var(--text); }
+
+  .summary-box.fail-border {
+    border-left-color: var(--fail);
+    background: var(--fail-glow);
+  }
+
+  .meta-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    background: var(--bg-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    padding: 0.6rem 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .rule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .rule-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.75rem;
+    align-items: start;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    padding: 0.85rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .rule-item:hover { background: var(--bg-warm); }
+
+  .rule-item .verdict {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    margin-top: 0.15rem;
+  }
+
+  .rule-item .verdict.pass {
+    background: rgba(107,158,107,0.12);
+    color: var(--pass);
+  }
+
+  .rule-item .verdict.fail {
+    background: rgba(196,90,74,0.15);
+    color: var(--fail);
+  }
+
+  .rule-item .verdict.neutral {
+    background: rgba(158,149,138,0.1);
+    color: var(--text-dim);
+  }
+
+  .rule-item .info { min-width: 0; }
+
+  .rule-item .info .name {
+    font-weight: 600;
+    font-size: 0.92rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .rule-item .info .meta {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+
+  .rule-item .points {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .rule-detail {
+    display: none;
+    grid-column: 1 / -1;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .rule-item.open .rule-detail { display: block; }
+
+  .rule-detail .detail-row { margin-bottom: 0.5rem; }
+  .rule-detail .detail-row:last-child { margin-bottom: 0; }
+
+  .rule-detail .detail-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+    margin-bottom: 0.15rem;
+  }
+
+  .rule-detail .quote {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    background: var(--surface);
+    border-left: 2px solid var(--border);
+    padding: 0.5rem 0.7rem;
+    border-radius: 0 4px 4px 0;
+    color: var(--text-muted);
+    overflow-wrap: break-word;
+  }
+
+  .status {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .status.active { display: flex; }
+  .status.error { color: var(--fail); }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .footer {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 2rem;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+
+  .presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .preset-chip {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    padding: 0.35rem 0.7rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .preset-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .preset-chip.active {
+    background: var(--accent-glow);
+    border-color: var(--accent);
+    color: var(--accent-light);
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>Scrutiny</h1>
+    <p>What your QA misses in 60 minutes, Scrutiny finds in 60 seconds. Paste a redacted transcript, get a structured compliance report with verbatim evidence quotes, statutory citations, and an autofail violation summary.</p>
+    <div class="badge"><span class="dot"></span> 12 FDCPA / Reg F rules &middot; LLM + deterministic evaluation</div>
+  </header>
+
+  <section>
+    <h2>Transcript</h2>
+    <div class="presets" id="presets">
+      <span class="preset-chip" data-id="tx_001_clean">tx_001_clean</span>
+      <span class="preset-chip" data-id="tx_002_no_miranda">tx_002_no_miranda</span>
+      <span class="preset-chip" data-id="tx_003_voicemail">tx_003_voicemail</span>
+      <span class="preset-chip" data-id="tx_004_cease_desist">tx_004_cease_desist</span>
+      <span class="preset-chip" data-id="tx_005_harassment">tx_005_harassment</span>
+    </div>
+    <div class="two-col">
+      <textarea id="transcriptInput" placeholder='Transcript JSON (redacted)...&#10;{&#10;  "transcript_id": "...",&#10;  "turns": [...]&#10;}'></textarea>
+      <textarea id="metadataInput" placeholder='Metadata sidecar...&#10;{&#10;  "call_timestamp_local": "...",&#10;  "consumer_timezone": "...",&#10;  ...&#10;}'></textarea>
+    </div>
+    <label class="file-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Or drop a combined JSON file here
+      <input type="file" id="fileInput" accept=".json,application/json">
+    </label>
+    <div class="actions">
+      <button class="btn btn-primary" id="evaluateBtn">Evaluate Transcript</button>
+      <button class="btn btn-ghost" id="clearBtn">Clear</button>
+    </div>
+    <div class="status" id="status"><div class="spinner"></div><span>Evaluating...</span></div>
+  </section>
+
+  <section class="results" id="results">
+    <h2>Compliance Report</h2>
+
+    <div class="scoreboard">
+      <div class="score-card">
+        <div class="label">Overall</div>
+        <div class="value neutral" id="overallValue">—</div>
+      </div>
+      <div class="score-card">
+        <div class="label">Score</div>
+        <div class="value neutral" id="scoreValue">—</div>
+      </div>
+      <div class="score-card">
+        <div class="label">Passed</div>
+        <div class="value pass" id="passValue">—</div>
+      </div>
+      <div class="score-card">
+        <div class="label">Failed</div>
+        <div class="value fail" id="failValue">—</div>
+      </div>
+    </div>
+
+    <div class="summary-box" id="summaryBox">
+      <strong>Summary:</strong> <span id="summaryText">—</span>
+    </div>
+
+    <div class="meta-bar" id="metaBar"></div>
+
+    <div class="rule-list" id="ruleList"></div>
+  </section>
+
+  <footer class="footer">
+    Scrutiny &middot; Not legal advice &middot; Built for evaluation and research
+  </footer>
+</div>
+
+<script>
+const $ = (sel) => document.querySelector(sel);
+const transcriptInput = $('#transcriptInput');
+const metadataInput = $('#metadataInput');
+const fileInput = $('#fileInput');
+const evaluateBtn = $('#evaluateBtn');
+const clearBtn = $('#clearBtn');
+const status = $('#status');
+const results = $('#results');
+const presets = document.querySelectorAll('.preset-chip');
+
+// Preset loading
+presets.forEach(chip => {
+  chip.addEventListener('click', async () => {
+    presets.forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    const id = chip.dataset.id;
+    try {
+      const [tRes, mRes] = await Promise.all([
+        fetch(`/transcripts/${id}.json`),
+        fetch(`/transcripts/${id}_meta.json`)
+      ]);
+      if (!tRes.ok || !mRes.ok) throw new Error('Failed to load preset');
+      const transcript = await tRes.json();
+      const metadata = await mRes.json();
+      transcriptInput.value = JSON.stringify(transcript, null, 2);
+      metadataInput.value = JSON.stringify(metadata, null, 2);
+      hideResults();
+    } catch (e) {
+      showStatus('Error loading preset: ' + e.message, true);
+    }
+  });
+});
+
+// File input
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (data.transcript) transcriptInput.value = JSON.stringify(data.transcript, null, 2);
+      if (data.metadata) metadataInput.value = JSON.stringify(data.metadata, null, 2);
+      hideResults();
+    } catch (err) {
+      showStatus('Invalid JSON file: ' + err.message, true);
+    }
+  };
+  reader.readAsText(file);
+});
+
+// Drag and drop
+transcriptInput.addEventListener('dragover', (e) => { e.preventDefault(); transcriptInput.style.borderColor = 'var(--accent)'; });
+transcriptInput.addEventListener('dragleave', () => { transcriptInput.style.borderColor = ''; });
+transcriptInput.addEventListener('drop', (e) => {
+  e.preventDefault();
+  transcriptInput.style.borderColor = '';
+  const file = e.dataTransfer.files[0];
+  if (file && file.type === 'application/json') {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (data.transcript) transcriptInput.value = JSON.stringify(data.transcript, null, 2);
+        if (data.metadata) metadataInput.value = JSON.stringify(data.metadata, null, 2);
+        hideResults();
+      } catch (err) {
+        showStatus('Invalid JSON: ' + err.message, true);
+      }
+    };
+    reader.readAsText(file);
+  }
+});
+
+evaluateBtn.addEventListener('click', async () => {
+  let transcript, metadata;
+  try {
+    transcript = JSON.parse(transcriptInput.value.trim() || '{}');
+    metadata = JSON.parse(metadataInput.value.trim() || '{}');
+  } catch (e) {
+    showStatus('Invalid JSON: ' + e.message, true);
+    return;
+  }
+
+  showStatus('Evaluating...');
+  evaluateBtn.disabled = true;
+
+  try {
+    const res = await fetch('/audit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transcript, metadata }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.detail || `HTTP ${res.status}`);
+    }
+    renderReport(data);
+    hideStatus();
+  } catch (e) {
+    showStatus('Evaluation failed: ' + e.message, true);
+  } finally {
+    evaluateBtn.disabled = false;
+  }
+});
+
+clearBtn.addEventListener('click', () => {
+  transcriptInput.value = '';
+  metadataInput.value = '';
+  hideResults();
+  presets.forEach(c => c.classList.remove('active'));
+});
+
+function showStatus(msg, isError = false) {
+  status.classList.add('active');
+  status.classList.toggle('error', isError);
+  status.querySelector('span').textContent = msg;
+  if (isError) status.querySelector('.spinner').style.display = 'none';
+  else status.querySelector('.spinner').style.display = 'block';
+}
+
+function hideStatus() {
+  status.classList.remove('active', 'error');
+}
+
+function hideResults() {
+  results.classList.remove('active');
+}
+
+function renderReport(report) {
+  const isFail = !report.is_compliant;
+  $('#overallValue').textContent = report.overall_score;
+  $('#overallValue').className = 'value ' + (isFail ? 'fail' : 'pass');
+  $('#scoreValue').textContent = report.compliance_score + '%';
+  $('#scoreValue').className = 'value ' + (isFail ? 'fail' : 'pass');
+  $('#passValue').textContent = report.total_passed;
+  $('#failValue').textContent = report.total_failed;
+  $('#summaryText').textContent = report.summary;
+
+  const summaryBox = $('#summaryBox');
+  if (isFail) summaryBox.classList.add('fail-border');
+  else summaryBox.classList.remove('fail-border');
+
+  $('#metaBar').textContent = `${report.total_rules} rules · ${report.points_earned}/${report.total_points} points · ${report.evaluation_time_ms}ms · ${report.llm_model}`;
+
+  const list = $('#ruleList');
+  list.innerHTML = '';
+
+  report.rule_results.forEach(r => {
+    const item = document.createElement('div');
+    item.className = 'rule-item';
+    const vClass = r.verdict === 'pass' ? 'pass' : (r.verdict === 'fail' ? 'fail' : 'neutral');
+    const vText = r.verdict;
+    const autoBadge = r.is_autofail ? ' &middot; autofail' : '';
+    const sevBadge = r.severity && r.severity !== 'none' ? ` &middot; ${r.severity}` : '';
+
+    item.innerHTML = `
+      <div class="verdict ${vClass}">${vText}</div>
+      <div class="info">
+        <div class="name">${r.rule_id} — ${r.rule_name}</div>
+        <div class="meta">${r.category}${autoBadge}${sevBadge}</div>
+      </div>
+      <div class="points">${r.points_earned}/${r.points}</div>
+      <div class="rule-detail">
+        <div class="detail-row">
+          <div class="detail-label">Reasoning</div>
+          <div>${escapeHtml(r.reasoning)}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Evidence</div>
+          <div class="quote">${escapeHtml(r.evidence_quote)}</div>
+        </div>
+        ${r.legal_basis ? `<div class="detail-row"><div class="detail-label">Legal Basis</div><div>${escapeHtml(r.legal_basis)}</div></div>` : ''}
+      </div>
+    `;
+
+    item.addEventListener('click', () => item.classList.toggle('open'));
+    list.appendChild(item);
+  });
+
+  results.classList.add('active');
+  results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+</script>
+</body>
+</html>

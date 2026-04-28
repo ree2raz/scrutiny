@@ -1,0 +1,14 @@
+{
+  "transcript_id": "tx_004_cease_desist",
+  "call_timestamp_local": "2026-04-19T11:00:00",
+  "consumer_timezone": "America/New_York",
+  "call_attempts_7day": 4,
+  "validation_notice_sent": true,
+  "validation_notice_date": "2026-04-14",
+  "attorney_on_record": false,
+  "cease_desist_on_file": false,
+  "dispute_on_file": false,
+  "debt_amount_original": 1675.00,
+  "debt_amount_claimed": 1675.00,
+  "call_direction": "outbound"
+}

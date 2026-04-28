@@ -1,0 +1,28 @@
+{
+  "transcript_id": "tx_004_cease_desist",
+  "turns": [
+    {"speaker": "agent", "text": "Hello, may I speak with [CONSUMER_NAME]?"},
+    {"speaker": "consumer", "text": "Who's calling?"},
+    {"speaker": "agent", "text": "This is [AGENT_NAME] from [AGENCY_NAME]. I am a debt collector calling to collect a debt. Any information obtained will be used for that purpose. May I speak with [CONSUMER_NAME]?"},
+    {"speaker": "consumer", "text": "Yeah, this is [CONSUMER_NAME]. What do you want?"},
+    {"speaker": "agent", "text": "Thank you, Mr. [CONSUMER_NAME]. Before we continue, can you confirm your date of birth for verification?"},
+    {"speaker": "consumer", "text": "It's [DATE_OF_BIRTH]. What's this about?"},
+    {"speaker": "agent", "text": "Thank you. I'm calling regarding a [CREDITOR_NAME] account with a balance of [DEBT_AMOUNT]. A validation notice has been sent to your address on file. Do you have any questions about the debt?"},
+    {"speaker": "consumer", "text": "Actually, yeah. I want you to stop calling me. I've already told your company twice. Stop contacting me."},
+    {"speaker": "agent", "text": "I understand your frustration, Mr. [CONSUMER_NAME], but we still need to resolve this account. If you can make a payment of at least five hundred dollars today, we can—"},
+    {"speaker": "consumer", "text": "[overlapping] Did you not hear me? I said stop calling me. Do not contact me again."},
+    {"speaker": "agent", "text": "I hear you, but if you don't pay something today, this will go to our legal department and your credit will be further damaged. Can we at least set up a small payment of—"},
+    {"speaker": "consumer", "text": "No! Stop! I don't want to hear about payment plans. I told you last week to take me off your list."},
+    {"speaker": "agent", "text": "Okay, okay. But before I let you go, are you sure you don't want to settle for seventy-five percent? It's a good deal and—"},
+    {"speaker": "consumer", "text": "I'm not interested in your deal. I don't want you people calling me anymore. How many times do I have to say it?"},
+    {"speaker": "agent", "text": "I understand, Mr. [CONSUMER_NAME]. I'm just saying that if you pay something — anything — today, I can make a note that you're cooperating and we can—"},
+    {"speaker": "consumer", "text": "[overlapping] I'm not cooperating! Stop calling!"},
+    {"speaker": "agent", "text": "Uh... okay. But real quick, are you sure you can't do even two hundred? Just to show good faith?"},
+    {"speaker": "consumer", "text": "I am telling you right now. Stop. Calling. Me. I don't care about the debt right now. I care about you leaving me alone."},
+    {"speaker": "agent", "text": "Alright, alright. But just so you know, if we don't hear from you by Friday, this account will be referred for further action. That's all I'm saying."},
+    {"speaker": "consumer", "text": "Fine. Do whatever. Just stop calling. Goodbye."},
+    {"speaker": "agent", "text": "Wait, Mr. [CONSUMER_NAME], one more thing—"},
+    {"speaker": "system", "text": "[Click]"},
+    {"speaker": "agent", "text": "Hello? Mr. [CONSUMER_NAME]?"}
+  ]
+}

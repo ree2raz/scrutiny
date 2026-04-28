@@ -1,0 +1,14 @@
+{
+  "transcript_id": "tx_002_no_miranda",
+  "call_timestamp_local": "2026-04-16T10:15:00",
+  "consumer_timezone": "America/New_York",
+  "call_attempts_7day": 2,
+  "validation_notice_sent": true,
+  "validation_notice_date": "2026-04-12",
+  "attorney_on_record": false,
+  "cease_desist_on_file": false,
+  "dispute_on_file": false,
+  "debt_amount_original": 3450.00,
+  "debt_amount_claimed": 3450.00,
+  "call_direction": "outbound"
+}

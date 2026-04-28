@@ -1,0 +1,14 @@
+{
+  "transcript_id": "tx_003_voicemail",
+  "call_timestamp_local": "2026-04-17T16:45:00",
+  "consumer_timezone": "America/New_York",
+  "call_attempts_7day": 5,
+  "validation_notice_sent": true,
+  "validation_notice_date": "2026-04-13",
+  "attorney_on_record": false,
+  "cease_desist_on_file": false,
+  "dispute_on_file": false,
+  "debt_amount_original": 2400.00,
+  "debt_amount_claimed": 2400.00,
+  "call_direction": "outbound"
+}

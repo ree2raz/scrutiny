@@ -1,0 +1,14 @@
+{
+  "transcript_id": "tx_005_harassment",
+  "call_timestamp_local": "2026-04-18T20:30:00",
+  "consumer_timezone": "America/New_York",
+  "call_attempts_7day": 8,
+  "validation_notice_sent": false,
+  "validation_notice_date": null,
+  "attorney_on_record": false,
+  "cease_desist_on_file": false,
+  "dispute_on_file": false,
+  "debt_amount_original": 890.00,
+  "debt_amount_claimed": 950.00,
+  "call_direction": "outbound"
+}
