@@ -31,10 +31,13 @@ _DEMO_CACHE: dict[str, dict] = {}
 def _load_demo_cache() -> None:
     """Pre-load cached demo responses from real OpenAI runs (response_oi_*.json)."""
     for path in _DEMO_DIR.glob("response_oi_*.json"):
-        # Filename format: response_oi_tx_001.json → key: tx_001
-        key = path.stem.replace("response_oi_", "")
         with path.open("r", encoding="utf-8") as f:
-            _DEMO_CACHE[key] = json.load(f)
+            data = json.load(f)
+        # Use the transcript_id inside the JSON as the key so it matches
+        # the incoming request exactly (e.g. tx_001_clean, not tx_001).
+        key = data.get("transcript_id")
+        if key:
+            _DEMO_CACHE[key] = data
     print(f"[Scrutiny] Loaded {len(_DEMO_CACHE)} demo responses from OpenAI runs.")
 
 
