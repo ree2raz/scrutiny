@@ -26,10 +26,10 @@ Scrutiny evaluates debt-collection call transcripts against a 12-rule rubric der
 ## Quickstart
 
 ```bash
-# Install dependencies
-pip install -e ".[dev]"
+# Install dependencies (requires uv: https://docs.astral.sh/uv/)
+uv pip install -e ".[dev]"
 
-# Set your LLM provider (anthropic, openai, or openrouter)
+# Set your LLM provider (huggingface, anthropic, openai, or openrouter)
 cp .env.example .env
 # Edit .env with your API key
 
