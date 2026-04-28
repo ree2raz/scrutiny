@@ -187,7 +187,9 @@ docker build -t scrutiny .
 docker run -p 7860:7860 --env-file .env scrutiny
 ```
 
-**Live demo:** [https://huggingface.co/spaces/ree2raz/Scrutiny](https://huggingface.co/spaces/ree2raz/Scrutiny)
+**Live demo:**
+
+[![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Space-blue)]([https://huggingface.co/spaces/ree2raz/auditguard-mcp](https://huggingface.co/spaces/ree2raz/Scrutiny))
 
 ## License
 
