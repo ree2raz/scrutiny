@@ -196,3 +196,7 @@ Apache 2.0 — see `LICENSE`.
 ## Disclaimer
 
 Scrutiny is for **evaluation, research, and compliance monitoring** purposes. It is not legal advice. Always consult qualified counsel for FDCPA / Reg F compliance decisions.
+
+---
+
+**Need a custom rubric for your compliance workflow?** Pilot engagements available — book a call at [cal.com/ree2raz/quick-chat](https://cal.com/ree2raz/quick-chat).
