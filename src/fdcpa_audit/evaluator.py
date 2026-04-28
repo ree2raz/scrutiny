@@ -153,7 +153,15 @@ def evaluate_audit_request(
     aggregate scores, and a narrative summary.
     """
     start_time = perf_counter()
-    client = llm_client or get_llm_client()
+
+    # Use visitor-provided key if present
+    if request.provider_api_key:
+        client = get_llm_client(
+            provider=request.provider,
+            api_key=request.provider_api_key,
+        )
+    else:
+        client = llm_client or get_llm_client()
 
     # 1. Deterministic checks for metadata-only rules
     deterministic_results: dict[str, RuleResult] = {}

@@ -462,6 +462,169 @@
   @media (max-width: 640px) {
     .two-col { grid-template-columns: 1fr; }
   }
+
+  /* Settings panel */
+  .settings-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    margin-top: 0.75rem;
+    user-select: none;
+  }
+
+  .settings-toggle svg {
+    transition: transform 0.2s;
+  }
+
+  .settings-toggle.open svg {
+    transform: rotate(180deg);
+  }
+
+  .settings-panel {
+    display: none;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-top: 0.5rem;
+    gap: 0.75rem;
+    flex-direction: column;
+  }
+
+  .settings-panel.open {
+    display: flex;
+  }
+
+  .settings-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .settings-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    min-width: 80px;
+  }
+
+  .settings-hint {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  .settings-input {
+    flex: 1;
+    min-width: 200px;
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    padding: 0.5rem 0.7rem;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+
+  .settings-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  /* Toggle switch */
+  .toggle {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+  }
+
+  .toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: var(--border);
+    border-radius: 22px;
+    transition: background 0.2s;
+  }
+
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background: var(--text);
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+
+  .toggle input:checked + .toggle-slider {
+    background: var(--accent);
+  }
+
+  .toggle input:checked + .toggle-slider::before {
+    transform: translateX(18px);
+    background: #0f0e0c;
+  }
+
+  /* Select wrapper */
+  .sel {
+    position: relative;
+    display: inline-block;
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    padding: 0.4rem 0.7rem;
+    min-width: 180px;
+  }
+
+  .sel::after {
+    content: '';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b6259' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+  .sel select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    padding-right: 20px;
+    width: 100%;
+    cursor: pointer;
+  }
+
+  .sel select:focus {
+    outline: none;
+  }
+
+  .sel select option {
+    background: var(--bg-raised);
+    color: var(--text);
+  }
 </style>
 </head>
 <body>
@@ -490,6 +653,37 @@
       Or drop a combined JSON file here
       <input type="file" id="fileInput" accept=".json,application/json">
     </label>
+
+    <div class="settings-toggle" id="settingsToggle">
+      <span>Settings</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="settings-panel" id="settingsPanel">
+      <div class="settings-row">
+        <label class="settings-label">Demo Mode</label>
+        <label class="toggle">
+          <input type="checkbox" id="demoToggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="settings-hint">Instant cached results for presets. No API key needed.</span>
+      </div>
+      <div class="settings-row">
+        <label class="settings-label">Provider</label>
+        <div class="sel">
+          <select id="providerSelect">
+            <option value="huggingface">Hugging Face (default)</option>
+            <option value="anthropic">Anthropic</option>
+            <option value="openai">OpenAI</option>
+            <option value="openrouter">OpenRouter</option>
+          </select>
+        </div>
+      </div>
+      <div class="settings-row">
+        <label class="settings-label">API Key</label>
+        <input type="password" class="settings-input" id="apiKeyInput" placeholder="Paste your API key here (optional for presets in demo mode)">
+      </div>
+    </div>
+
     <div class="actions">
       <button class="btn btn-primary" id="evaluateBtn">Evaluate Transcript</button>
       <button class="btn btn-ghost" id="clearBtn">Clear</button>
@@ -543,6 +737,17 @@ const clearBtn = $('#clearBtn');
 const status = $('#status');
 const results = $('#results');
 const presets = document.querySelectorAll('.preset-chip');
+const settingsToggle = $('#settingsToggle');
+const settingsPanel = $('#settingsPanel');
+const demoToggle = $('#demoToggle');
+const providerSelect = $('#providerSelect');
+const apiKeyInput = $('#apiKeyInput');
+
+// Settings toggle
+settingsToggle.addEventListener('click', () => {
+  settingsToggle.classList.toggle('open');
+  settingsPanel.classList.toggle('open');
+});
 
 // Preset loading
 presets.forEach(chip => {
@@ -560,6 +765,8 @@ presets.forEach(chip => {
       const metadata = await mRes.json();
       transcriptInput.value = JSON.stringify(transcript, null, 2);
       metadataInput.value = JSON.stringify(metadata, null, 2);
+      // Auto-enable demo mode for presets
+      demoToggle.checked = true;
       hideResults();
     } catch (e) {
       showStatus('Error loading preset: ' + e.message, true);
@@ -618,14 +825,32 @@ evaluateBtn.addEventListener('click', async () => {
     return;
   }
 
-  showStatus('Evaluating...');
+  const isDemo = demoToggle.checked;
+  const provider = providerSelect.value;
+  const apiKey = apiKeyInput.value.trim();
+
+  const payload = {
+    transcript,
+    metadata,
+    demo: isDemo,
+  };
+  if (apiKey) {
+    payload.provider_api_key = apiKey;
+    payload.provider = provider;
+  }
+
+  if (isDemo) {
+    showStatus('Loading demo result...');
+  } else {
+    showStatus('Evaluating with LLM (this may take 30–180s)...');
+  }
   evaluateBtn.disabled = true;
 
   try {
     const res = await fetch('/audit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ transcript, metadata }),
+      body: JSON.stringify(payload),
     });
     const data = await res.json();
     if (!res.ok) {

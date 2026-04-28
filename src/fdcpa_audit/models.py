@@ -129,6 +129,18 @@ class AuditRequest(BaseModel):
 
     transcript: Transcript
     metadata: TranscriptMetadata = Field(default_factory=TranscriptMetadata)
+    demo: bool = Field(
+        default=False,
+        description="If True, use cached demo response instead of calling an LLM.",
+    )
+    provider_api_key: str | None = Field(
+        default=None,
+        description="Visitor-provided API key. Overrides server config for this request.",
+    )
+    provider: Literal["huggingface", "anthropic", "openai", "openrouter"] | None = Field(
+        default=None,
+        description="Override LLM provider for this request.",
+    )
 
 
 class RuleResult(BaseModel):

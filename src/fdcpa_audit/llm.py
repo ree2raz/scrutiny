@@ -33,10 +33,13 @@ class AnthropicClient(LLMClient):
     Override model with ANTHROPIC_MODEL environment variable.
     """
 
-    def __init__(self, model: str | None = None):
+    def __init__(self, model: str | None = None, api_key: str | None = None):
         import anthropic
 
-        self.client = anthropic.Anthropic()
+        kwargs = {}
+        if api_key:
+            kwargs["api_key"] = api_key
+        self.client = anthropic.Anthropic(**kwargs)
         self.model = model or os.environ.get(
             "ANTHROPIC_MODEL", "claude-sonnet-4-20250514"
         )
@@ -57,10 +60,13 @@ class OpenAIClient(LLMClient):
     Override model with OPENAI_MODEL environment variable.
     """
 
-    def __init__(self, model: str | None = None):
+    def __init__(self, model: str | None = None, api_key: str | None = None):
         import openai
 
-        self.client = openai.OpenAI()
+        kwargs = {}
+        if api_key:
+            kwargs["api_key"] = api_key
+        self.client = openai.OpenAI(**kwargs)
         self.model = model or os.environ.get("OPENAI_MODEL", "gpt-4o")
 
     def complete(self, system: str, user: str) -> str:
@@ -82,12 +88,12 @@ class OpenRouterClient(LLMClient):
     Default model is anthropic/claude-sonnet-4.
     """
 
-    def __init__(self, model: str | None = None):
+    def __init__(self, model: str | None = None, api_key: str | None = None):
         import openai
 
         self.client = openai.OpenAI(
             base_url="https://openrouter.ai/api/v1",
-            api_key=os.environ["OPENROUTER_API_KEY"],
+            api_key=api_key or os.environ["OPENROUTER_API_KEY"],
         )
         self.model = model or os.environ.get(
             "OPENROUTER_MODEL", "anthropic/claude-sonnet-4"
@@ -118,10 +124,10 @@ class HuggingFaceClient(LLMClient):
     If you need faster responses, switch to anthropic/openai/openrouter.
     """
 
-    def __init__(self, model: str | None = None):
+    def __init__(self, model: str | None = None, api_key: str | None = None):
         import openai
 
-        token = os.environ.get("HF_TOKEN")
+        token = api_key or os.environ.get("HF_TOKEN")
         self.client = openai.OpenAI(
             base_url="https://router.huggingface.co/v1",
             api_key=token or "dummy",  # HF Spaces injects HF_TOKEN; dummy fails fast locally
@@ -171,13 +177,16 @@ _PROVIDERS: dict[str, type[LLMClient]] = {
 }
 
 
-def get_llm_client(provider: str | None = None) -> LLMClient:
+def get_llm_client(provider: str | None = None, api_key: str | None = None) -> LLMClient:
     """Factory: return an LLM client for the given provider name.
 
     Resolution order:
     1. Explicit `provider` argument
     2. LLM_PROVIDER environment variable
     3. Default to "huggingface"
+
+    If `api_key` is provided, it is passed to the provider constructor
+    so the visitor's own key is used instead of the server's.
 
     Raises ValueError if the provider name is not recognized.
     """
@@ -190,4 +199,4 @@ def get_llm_client(provider: str | None = None) -> LLMClient:
             f"Unknown LLM provider '{name}'. Valid providers: {valid}"
         )
 
-    return _PROVIDERS[name]()
+    return _PROVIDERS[name](api_key=api_key)

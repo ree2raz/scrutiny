@@ -24,15 +24,21 @@ from fdcpa_audit.models import AuditRequest, ComplianceReport
 WEB_DIR = Path(__file__).parent / "web"
 TRANSCRIPTS_DIR = Path(__file__).parent / "transcripts"
 
-_CONFIG_MSG = (
-    "LLM provider not configured. "
-    "Set LLM_PROVIDER (huggingface, anthropic, openai, or openrouter) and the corresponding "
-    "API key (HF_TOKEN, ANTHROPIC_API_KEY, OPENAI_API_KEY, or OPENROUTER_API_KEY) in your .env file."
-)
+_DEMO_DIR = Path(__file__).parent / "transcripts"
+_DEMO_CACHE: dict[str, dict] = {}
+
+
+def _load_demo_cache() -> None:
+    """Pre-load cached demo responses for the 5 synthetic transcripts."""
+    for path in _DEMO_DIR.glob("*.demo.json"):
+        with path.open("r", encoding="utf-8") as f:
+            _DEMO_CACHE[path.stem.replace(".demo", "")] = json.load(f)
+    print(f"[Scrutiny] Loaded {len(_DEMO_CACHE)} demo responses.")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    _load_demo_cache()
     provider = os.environ.get("LLM_PROVIDER", "huggingface").lower().strip()
     key_map = {
         "huggingface": "HF_TOKEN",
@@ -43,26 +49,22 @@ async def lifespan(app: FastAPI):
     missing_key = key_map.get(provider)
 
     if missing_key and not os.environ.get(missing_key):
-        app.state.llm_configured = False
-        app.state.config_error = _CONFIG_MSG
+        app.state.server_key_configured = False
         print("=" * 60)
-        print("SCRUTINY: LLM provider is NOT configured.")
-        print(f"  Expected environment variable: {missing_key}")
-        print("  Please set it in your .env file or Hugging Face Space secrets.")
+        print("SCRUTINY: No server-side LLM key configured.")
+        print("  Demo mode is available for preset transcripts.")
+        print("  Visitors can provide their own API key for custom transcripts.")
         print("=" * 60)
     else:
         try:
             get_llm_client()
-            app.state.llm_configured = True
-            app.state.config_error = None
-            print("[Scrutiny] LLM client initialized successfully.")
+            app.state.server_key_configured = True
+            print("[Scrutiny] Server-side LLM client initialized successfully.")
         except Exception as exc:
-            app.state.llm_configured = False
-            app.state.config_error = _CONFIG_MSG
+            app.state.server_key_configured = False
             print("=" * 60)
-            print("SCRUTINY: LLM client initialization FAILED.")
+            print("SCRUTINY: Server-side LLM client initialization FAILED.")
             print(f"  Reason: {exc}")
-            print("  Please check your API key and LLM_PROVIDER settings.")
             print("=" * 60)
     yield
 
@@ -70,7 +72,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Scrutiny",
     description="What your QA misses in 60 minutes, Scrutiny finds in 60 seconds.",
-    version="0.2.0",
+    version="0.3.0",
     lifespan=lifespan,
 )
 
@@ -92,14 +94,39 @@ def health() -> dict[str, str]:
 def api_audit(request: AuditRequest) -> ComplianceReport:
     """Evaluate a transcript + metadata against the FDCPA rubric.
 
-    Returns a ComplianceReport with per-rule results, aggregate scores,
-    and a narrative summary.
+    Demo mode: if request.demo=True and the transcript_id matches a preset,
+    returns a cached response instantly with no LLM call.
+
+    Custom evaluation: requires a server-side key or a visitor-provided
+    provider_api_key.
     """
-    if not getattr(app.state, "llm_configured", False):
+    # 1. Demo mode — serve cached response for known presets
+    if request.demo:
+        cached = _DEMO_CACHE.get(request.transcript.transcript_id)
+        if cached:
+            return ComplianceReport(**cached)
+        raise HTTPException(
+            status_code=404,
+            detail=f"Demo response not found for '{request.transcript.transcript_id}'. "
+            "Available demos: " + ", ".join(_DEMO_CACHE.keys()),
+        )
+
+    # 2. Real evaluation — need a key somewhere
+    has_server_key = getattr(app.state, "server_key_configured", False)
+    has_visitor_key = bool(request.provider_api_key)
+
+    if not has_server_key and not has_visitor_key:
         raise HTTPException(
             status_code=503,
-            detail=getattr(app.state, "config_error", None) or _CONFIG_MSG,
+            detail=(
+                "No LLM API key available.\n\n"
+                "Options:\n"
+                "1. Select a preset transcript and enable Demo Mode (instant, no key needed).\n"
+                "2. Provide your own API key in the settings panel.\n"
+                "3. Ask the space owner to configure a server-side key."
+            ),
         )
+
     try:
         report = evaluate_audit_request(request)
     except Exception as exc:
