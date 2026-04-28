@@ -181,7 +181,7 @@ Supported providers (set `LLM_PROVIDER` in `.env`):
 | `openai` — GPT-4o | `gpt-4o` | `OPENAI_MODEL` |
 | `openrouter` — Any model | `anthropic/claude-sonnet-4` | `OPENROUTER_MODEL` |
 
-Hugging Face is the default because it works out of the box on Hugging Face Spaces (`HF_TOKEN` is auto-injected). For local development, set `HF_TOKEN` or switch to another provider.
+**Hugging Face** is the default because it works out of the box on Hugging Face Spaces (`HF_TOKEN` is auto-injected). The default model is `google/gemma-4-31B-it` — a strong open model. Note: on the free HF Inference tier, 31B models can take 2–4 minutes to cold-start and may return 504 Gateway Timeouts. The client auto-retries once with a 5-minute timeout. If you need faster responses, switch to `anthropic` or `openai`.
 
 ## Deployment
 

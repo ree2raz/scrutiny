@@ -106,31 +106,60 @@ class OpenRouterClient(LLMClient):
 
 
 class HuggingFaceClient(LLMClient):
-    """Hugging Face Serverless Inference API.
+    """Hugging Face Serverless Inference API (OpenAI-compatible endpoint).
 
     Set HF_TOKEN (optional on HF Spaces where it's auto-injected).
     Default model is google/gemma-4-31B-it.
-    Override with HF_MODEL environment variable.
+    Override with HF_MODEL env var.
+
+    Note: gemma-4 is a 31B model. On the free HF Inference tier it can
+    take 2–4 minutes to cold-start, causing 504 timeouts. The client
+    below uses a 300-second timeout and retries once automatically.
+    If you need faster responses, switch to anthropic/openai/openrouter.
     """
 
     def __init__(self, model: str | None = None):
-        from huggingface_hub import InferenceClient
+        import openai
 
-        self.client = InferenceClient()
+        token = os.environ.get("HF_TOKEN")
+        self.client = openai.OpenAI(
+            base_url="https://router.huggingface.co/v1",
+            api_key=token or "dummy",  # HF Spaces injects HF_TOKEN; dummy fails fast locally
+            timeout=300,  # 5 min — gemma-4 can take 2–4 min to cold-start
+            max_retries=2,
+        )
         self.model = model or os.environ.get(
             "HF_MODEL", "google/gemma-4-31B-it"
         )
 
     def complete(self, system: str, user: str) -> str:
-        response = self.client.chat_completion(
-            model=self.model,
-            max_tokens=4096,
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ],
-        )
-        return response.choices[0].message.content
+        import time
+
+        last_exc = None
+        for attempt in range(1, 3):
+            try:
+                response = self.client.chat.completions.create(
+                    model=self.model,
+                    max_tokens=4096,
+                    messages=[
+                        {"role": "system", "content": system},
+                        {"role": "user", "content": user},
+                    ],
+                )
+                return response.choices[0].message.content
+            except Exception as exc:
+                last_exc = exc
+                # Retry on 504 Gateway Timeout or 503 Service Unavailable
+                err_str = str(exc).lower()
+                if "504" in err_str or "503" in err_str or "timeout" in err_str:
+                    if attempt < 2:
+                        wait = 5 * attempt
+                        print(f"[HF Inference] Attempt {attempt} failed ({exc}). Retrying in {wait}s...")
+                        time.sleep(wait)
+                        continue
+                raise
+        # Should never reach here, but just in case
+        raise last_exc or RuntimeError("HF Inference failed after retries")
 
 
 # Provider registry. Add new providers here.
