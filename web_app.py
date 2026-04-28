@@ -26,15 +26,16 @@ TRANSCRIPTS_DIR = Path(__file__).parent / "transcripts"
 
 _CONFIG_MSG = (
     "LLM provider not configured. "
-    "Set LLM_PROVIDER (anthropic, openai, or openrouter) and the corresponding "
-    "API key (ANTHROPIC_API_KEY, OPENAI_API_KEY, or OPENROUTER_API_KEY) in your .env file."
+    "Set LLM_PROVIDER (huggingface, anthropic, openai, or openrouter) and the corresponding "
+    "API key (HF_TOKEN, ANTHROPIC_API_KEY, OPENAI_API_KEY, or OPENROUTER_API_KEY) in your .env file."
 )
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    provider = os.environ.get("LLM_PROVIDER", "anthropic").lower().strip()
+    provider = os.environ.get("LLM_PROVIDER", "huggingface").lower().strip()
     key_map = {
+        "huggingface": "HF_TOKEN",
         "anthropic": "ANTHROPIC_API_KEY",
         "openai": "OPENAI_API_KEY",
         "openrouter": "OPENROUTER_API_KEY",

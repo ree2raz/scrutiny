@@ -1,9 +1,9 @@
 """
 LLM provider abstraction.
 
-Supports Anthropic (default), OpenAI, and OpenRouter via a factory function.
-Each provider implements the same interface: take a system prompt and user
-message, return a string response.
+Supports Hugging Face Inference API (default), Anthropic, OpenAI, and OpenRouter
+via a factory function. Each provider implements the same interface: take a
+system prompt and user message, return a string response.
 
 No streaming. No retries. No caching. This is a reference implementation.
 """
@@ -28,13 +28,18 @@ class LLMClient(ABC):
 
 
 class AnthropicClient(LLMClient):
-    """Anthropic Claude via the official SDK."""
+    """Anthropic Claude via the official SDK.
 
-    def __init__(self, model: str = "claude-sonnet-4-20250514"):
+    Override model with ANTHROPIC_MODEL environment variable.
+    """
+
+    def __init__(self, model: str | None = None):
         import anthropic
 
         self.client = anthropic.Anthropic()
-        self.model = model
+        self.model = model or os.environ.get(
+            "ANTHROPIC_MODEL", "claude-sonnet-4-20250514"
+        )
 
     def complete(self, system: str, user: str) -> str:
         response = self.client.messages.create(
@@ -47,13 +52,16 @@ class AnthropicClient(LLMClient):
 
 
 class OpenAIClient(LLMClient):
-    """OpenAI API via the official SDK."""
+    """OpenAI API via the official SDK.
 
-    def __init__(self, model: str = "gpt-4o"):
+    Override model with OPENAI_MODEL environment variable.
+    """
+
+    def __init__(self, model: str | None = None):
         import openai
 
         self.client = openai.OpenAI()
-        self.model = model
+        self.model = model or os.environ.get("OPENAI_MODEL", "gpt-4o")
 
     def complete(self, system: str, user: str) -> str:
         response = self.client.chat.completions.create(
@@ -97,8 +105,37 @@ class OpenRouterClient(LLMClient):
         return response.choices[0].message.content
 
 
+class HuggingFaceClient(LLMClient):
+    """Hugging Face Serverless Inference API.
+
+    Set HF_TOKEN (optional on HF Spaces where it's auto-injected).
+    Default model is google/gemma-4-31B-it.
+    Override with HF_MODEL environment variable.
+    """
+
+    def __init__(self, model: str | None = None):
+        from huggingface_hub import InferenceClient
+
+        self.client = InferenceClient()
+        self.model = model or os.environ.get(
+            "HF_MODEL", "google/gemma-4-31B-it"
+        )
+
+    def complete(self, system: str, user: str) -> str:
+        response = self.client.chat_completion(
+            model=self.model,
+            max_tokens=4096,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+        )
+        return response.choices[0].message.content
+
+
 # Provider registry. Add new providers here.
 _PROVIDERS: dict[str, type[LLMClient]] = {
+    "huggingface": HuggingFaceClient,
     "anthropic": AnthropicClient,
     "openai": OpenAIClient,
     "openrouter": OpenRouterClient,
@@ -111,11 +148,11 @@ def get_llm_client(provider: str | None = None) -> LLMClient:
     Resolution order:
     1. Explicit `provider` argument
     2. LLM_PROVIDER environment variable
-    3. Default to "anthropic"
+    3. Default to "huggingface"
 
     Raises ValueError if the provider name is not recognized.
     """
-    name = provider or os.environ.get("LLM_PROVIDER", "anthropic")
+    name = provider or os.environ.get("LLM_PROVIDER", "huggingface")
     name = name.lower().strip()
 
     if name not in _PROVIDERS:

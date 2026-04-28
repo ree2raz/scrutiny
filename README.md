@@ -174,9 +174,14 @@ metadata sidecar  ────┘                              │
 
 Supported providers (set `LLM_PROVIDER` in `.env`):
 
-- `anthropic` — Claude (default)
-- `openai` — GPT-4o
-- `openrouter` — Any model via OpenRouter
+| Provider | Default Model | Override via |
+|---|---|---|
+| `huggingface` — **Default** | `google/gemma-4-31B-it` | `HF_MODEL` |
+| `anthropic` — Claude | `claude-sonnet-4-20250514` | `ANTHROPIC_MODEL` |
+| `openai` — GPT-4o | `gpt-4o` | `OPENAI_MODEL` |
+| `openrouter` — Any model | `anthropic/claude-sonnet-4` | `OPENROUTER_MODEL` |
+
+Hugging Face is the default because it works out of the box on Hugging Face Spaces (`HF_TOKEN` is auto-injected). For local development, set `HF_TOKEN` or switch to another provider.
 
 ## Deployment
 
