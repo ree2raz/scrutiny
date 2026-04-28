@@ -191,6 +191,10 @@ class ComplianceReport(BaseModel):
     )
     summary: str = Field(description="Narrative summary of findings.")
     evaluation_time_ms: int = Field(description="Time spent evaluating in milliseconds.")
+    demo: bool = Field(
+        default=False,
+        description="True if this report was served from a cached demo response.",
+    )
 
 
 class ViolationSummary(BaseModel):

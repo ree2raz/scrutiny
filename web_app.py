@@ -24,16 +24,18 @@ from fdcpa_audit.models import AuditRequest, ComplianceReport
 WEB_DIR = Path(__file__).parent / "web"
 TRANSCRIPTS_DIR = Path(__file__).parent / "transcripts"
 
-_DEMO_DIR = Path(__file__).parent / "transcripts"
+_DEMO_DIR = Path(__file__).parent
 _DEMO_CACHE: dict[str, dict] = {}
 
 
 def _load_demo_cache() -> None:
-    """Pre-load cached demo responses for the 5 synthetic transcripts."""
-    for path in _DEMO_DIR.glob("*.demo.json"):
+    """Pre-load cached demo responses from real OpenAI runs (response_oi_*.json)."""
+    for path in _DEMO_DIR.glob("response_oi_*.json"):
+        # Filename format: response_oi_tx_001.json → key: tx_001
+        key = path.stem.replace("response_oi_", "")
         with path.open("r", encoding="utf-8") as f:
-            _DEMO_CACHE[path.stem.replace(".demo", "")] = json.load(f)
-    print(f"[Scrutiny] Loaded {len(_DEMO_CACHE)} demo responses.")
+            _DEMO_CACHE[key] = json.load(f)
+    print(f"[Scrutiny] Loaded {len(_DEMO_CACHE)} demo responses from OpenAI runs.")
 
 
 @asynccontextmanager
@@ -104,7 +106,9 @@ def api_audit(request: AuditRequest) -> ComplianceReport:
     if request.demo:
         cached = _DEMO_CACHE.get(request.transcript.transcript_id)
         if cached:
-            return ComplianceReport(**cached)
+            report = ComplianceReport(**cached)
+            report.demo = True
+            return report
         raise HTTPException(
             status_code=404,
             detail=f"Demo response not found for '{request.transcript.transcript_id}'. "

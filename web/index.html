@@ -276,6 +276,20 @@
     background: var(--fail-glow);
   }
 
+  .demo-banner {
+    background: rgba(196, 118, 58, 0.1);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .demo-banner strong {
+    color: var(--accent);
+  }
+
   .meta-bar {
     display: flex;
     justify-content: space-between;
@@ -665,7 +679,7 @@
           <input type="checkbox" id="demoToggle" checked>
           <span class="toggle-slider"></span>
         </label>
-        <span class="settings-hint">Instant cached results for presets. No API key needed.</span>
+        <span class="settings-hint">Instant cached results for presets (powered by GPT-4o). No API key needed.</span>
       </div>
       <div class="settings-row">
         <label class="settings-label">Provider</label>
@@ -715,6 +729,10 @@
 
     <div class="summary-box" id="summaryBox">
       <strong>Summary:</strong> <span id="summaryText">—</span>
+    </div>
+
+    <div class="demo-banner" id="demoBanner" style="display:none;">
+      <strong>Demo Mode</strong> — This is a cached response from GPT-4o for demonstration purposes. For custom transcripts, turn off Demo Mode and provide your own API key, or ask the space owner to configure a server-side key.
     </div>
 
     <div class="meta-bar" id="metaBar"></div>
@@ -902,6 +920,13 @@ function renderReport(report) {
   if (isFail) summaryBox.classList.add('fail-border');
   else summaryBox.classList.remove('fail-border');
 
+  const demoBanner = $('#demoBanner');
+  if (report.demo) {
+    demoBanner.style.display = 'block';
+  } else {
+    demoBanner.style.display = 'none';
+  }
+
   $('#metaBar').textContent = `${report.total_rules} rules · ${report.points_earned}/${report.total_points} points · ${report.evaluation_time_ms}ms · ${report.llm_model}`;
 
   const list = $('#ruleList');
@@ -951,6 +976,14 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 }
+
+// Auto-load the first preset on page open so the user can just click Evaluate
+document.addEventListener('DOMContentLoaded', () => {
+  const firstChip = presets[0];
+  if (firstChip) {
+    firstChip.click();
+  }
+});
 </script>
 </body>
 </html>
